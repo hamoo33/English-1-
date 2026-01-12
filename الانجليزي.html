@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>اختبار الإنجليزي الشامل - ENG/HAMODEY</title>
+<style>
+  /* تصميم داكن مريح للعين */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:0; padding:20px;
+    display:flex; flex-direction:column; align-items:center;
+    min-height:100vh;
+    background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+    background-size:600% 600%;
+    animation: gradientBG 20s ease infinite;
+    color:#ecf0f1;
+  }
+  @keyframes gradientBG {
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  .container {
+    max-width:800px; width:100%;
+    background: rgba(30,30,30,0.95);
+    border-radius:15px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    padding:25px;
+    z-index:1;
+  }
+
+  h1.title {
+    color:#f1c40f; text-align:center; margin-bottom:20px;
+    text-shadow: 0 0 10px #f1c40f;
+    font-size: 1.5rem;
+  }
+
+  .question-box {
+    font-size:1.1rem; font-weight:600; margin:20px 0;
+    text-align: left; /* لغة إنجليزية */
+    direction: ltr;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #f1c40f;
+  }
+
+  .answers {
+    display:flex; flex-direction:column; gap:12px;
+  }
+
+  button.answer-btn {
+    font-size:1rem; padding:12px;
+    border:2px solid #7f8c8d;
+    border-radius:10px;
+    background:#1c1c1c; color:#ecf0f1;
+    cursor:pointer;
+    transition: all 0.2s ease;
+    text-align:center;
+    font-weight: bold;
+  }
+  button.answer-btn:hover:not(:disabled){ background:#34495e; border-color:#f1c40f; transform:translateY(-2px);}
+  
+  /* ألوان الإجابات */
+  button.answer-btn.correct{ 
+    background: #27ae60 !important; color:white; border-color:#2ecc71; 
+  }
+  button.answer-btn.incorrect{ 
+    background: #c0392b !important; color:white; border-color:#e74c3c; 
+  }
+
+  .result-box {
+    text-align:center; display:none;
+  }
+  .score-title {
+    font-size:1.8rem; color:#f1c40f; margin-bottom:20px;
+  }
+  
+  /* تصميم قائمة الأخطاء */
+  .mistakes-container {
+    margin-top: 20px;
+    text-align: left;
+    direction: ltr;
+  }
+  .mistake-card {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid #c0392b;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .mistake-q { font-weight: bold; color: #ecf0f1; margin-bottom: 5px; }
+  .mistake-ans { color: #2ecc71; font-size: 0.9rem; }
+
+  footer { margin-top:30px; text-align:center; font-size: 0.9rem; opacity: 0.8; }
+  .links { display:flex; justify-content:center; gap:20px; margin-top: 10px;}
+  .links a { color:#e67e22; text-decoration:none; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1 class="title">🌟 Final English Exam - 80 Questions 🌟</h1>
+  
+  <div id="quiz-area">
+    <div style="text-align: right; margin-bottom: 5px; color: #bdc3c7; font-size: 0.9rem;">
+      سؤال رقم <span id="q-number">1</span> من <span id="q-total">80</span>
+    </div>
+    <div class="question-box" id="questionText">Loading...</div>
+    <div class="answers" id="answersList"></div>
+  </div>
+
+  <div id="result-area" class="result-box">
+    <div class="score-title" id="final-score"></div>
+    <div id="mistakes-section" class="mistakes-container"></div>
+    <button class="answer-btn" style="margin-top:20px; width:100%; background:#e67e22;" onclick="location.reload()">🔄 إعادة الاختبار</button>
+  </div>
+</div>
+
+<footer>
+  <p>Good Luck in Your Exam! | ENG/HAMODEY</p>
+  <div class="links">
+    <a href="https://wa.me/201016227536" target="_blank">WhatsApp</a>
+    <a href="https://instagram.com/mo7vmed_elbanna" target="_blank">Instagram</a>
+  </div>
+</footer>
+
+<script>
+// قاعدة بيانات الأسئلة (تمت مراجعتها وتنظيفها)
+const allQuestions = [
+    { q: "Both Clarity and Conciseness are not important for written communication skills", a: false },
+    { q: "You must Know your goal before you begin writing.", a: true },
+    { q: "To improve your verbal communications, you should be confidence of yourself.", a: true },
+    { q: "Weak verbal communications help to ensure that issues will be spotted and resolved in formative stages.", a: false },
+    { q: "Every job will require some degree of written communication skills.", a: true },
+    { q: "Your resume should be containing long sentences.", a: false },
+    { q: "Self-introduction is simply the act of introducing yourself to someone else.", a: true },
+    { q: "For a good introduction in English, you need to practice in advance.", a: true },
+    { q: "Number of years of experience in the field and technical training represent soft skills.", a: false },
+    { q: "Good communication begins after you get hired.", a: false },
+    { q: "To introduce yourself long talk is the perfect example to illustrate this point.", a: false },
+    { q: "A meeting is the place where the group revises, updates, and adds to what it knows as a group.", a: true },
+    { q: "A meeting still performs functions that replace with telephones and teleprinters.", a: false },
+    { q: "Meeting, composed of people whose normal work does not bring them into contact and whose work has little or no relationship to the others.", a: true },
+    { q: "A meeting is a status arena.", a: true },
+    { q: "Skimming is a preparation task by guessing the genre of the text before reading it.", a: false },
+    { q: "Prediction is done for grabbing the specific information of the passage.", a: false },
+    { q: "Basically, reading can be of two types: extensive and intensive, and the idea is to impart some skills needed for both.", a: true },
+    { q: "Comics strips and cartoons are another good way to have fun whilst improving your reading and comprehension skills.", a: true },
+    { q: "You take time to read a text carefully to find out the authors perspective... this is called Intensive Reading", a: true },
+    { q: "The way words are written can appear the same from the way they are pronounced.", a: false },
+    { q: "There are many types of activities such as grammar, vocabulary, coherence in framing sentences.", a: true },
+    { q: "Each paragraph should have its own idea.", a: true },
+    { q: "Using new words in the grammatically wrong way to improve writing skills.", a: false },
+    { q: "It is important for EFL students to think creatively about their writing as a method of communication.", a: true },
+    { q: "There is no link between writing and reading skills.", a: false },
+    { q: "Writing activities connected to text read have been found to be effective for struggling students.", a: true },
+    { q: "Whenever you develop your reading skills, you will also improve your writing skills.", a: true },
+    { q: "HOTS refer to English students learning.", a: false },
+    { q: "You will improve your understanding of grammar and how to construct sentences by writing.", a: true },
+    { q: "There are many factors and variables affecting on business organization.", a: true },
+    { q: "Government can’t control of the availability of credit through fiscal.", a: false },
+    { q: "The availability of high-quality entrepreneurs and managers effect on economic.", a: true },
+    { q: "The price of labor isn’t important economic factor on the input side.", a: false },
+    { q: "One of external factors that effect on organization work capital.", a: false },
+    { q: "One of the critical aspects of any organization's environment is the state of technology which affects its.", a: true },
+    { q: "The customers represent one of input for the economic environment.", a: false },
+    { q: "Increased ability to design new materials and change the properties of others... one of categories of technological change.", a: true },
+    { q: "The most important and the basic outcome from which business is made, is customers.", a: true },
+    { q: "Psychological bases of motivation, group behavior patterns, improved managerial techniques.", a: true },
+    { q: "Individual can escape being a member of a social order.", a: true },
+    { q: "The political environment could well be included as an element in the social environment.", a: false },
+    { q: "The political environment is primary a complex of laws.", a: true },
+    { q: "It is easy to separate the social, political, and ethical environments.", a: false },
+    { q: "The social environment is made up of the attitudes, desires, expectations, degrees of intelligence and education.", a: true },
+    { q: "Small talk is the perfect example to illustrate this point.", a: true },
+    { q: "Meetings at work are expected to get straight to the point.", a: true },
+    { q: "Your conversations don't need to be focused upon identifying.", a: false },
+    { q: "Public speaking is a talent that is honed both through practice and through formal training.", a: true },
+    { q: "Yay! I passed exam! (What is underlined is considered adjective).", a: false },
+    { q: "Written communication relies on grammar, punctuation and word choice.", a: true },
+    { q: "The Earth is not the center of the universe. (What is underlined is considered a noun).", a: true },
+    { q: "If I be queen for a day, I would eat cake for breakfast, lunch, and dinner.", a: false },
+    { q: "The weather is hot and humid. (What is underlined is considered an adjective).", a: true },
+    { q: "Good communication begins after you get hired. (Repeated)", a: false },
+    { q: "The monkey is on his back. (What is underlined is considered a noun).", a: false },
+    { q: "I live here now. (Past tense, present tense, future tense)", a: true },
+    { q: "He ran into the wall. (What is underlined is considered an adjective).", a: false },
+    { q: "I will live there when I am retired. (Past tense, present tense, future tense)", a: true },
+    { q: "You must Know your goal after you begin writing.", a: false },
+    { q: "Good communication begins after you get hired. (Repeated #2)", a: false },
+    { q: "She buys new shoes. (What is underlined is considered a pronoun).", a: false },
+    { q: "My brother are a doctor.", a: false },
+    { q: "Hey! How’s it going? (What is underlined is considered an interjection).", a: true },
+    { q: "Number of years of experience in the field and technical training represent soft skills.", a: false },
+    { q: "Good communication begins before you get hired.", a: true },
+    { q: "If I were queen for a day, I would eat cake for breakfast, lunch, and dinner.", a: true },
+    { q: "Public speaking is a talent that is honed both through practice and through formal training.", a: true },
+    { q: "There are three strategies to be taught to the students for enhancing their reading capabilities in different contexts.", a: false },
+    { q: "Writing skill are needed to make yourself understood in English written communication.", a: false },
+    { q: "Small talk is the perfect example to illustrate this point.", a: true },
+    { q: "The monthly meeting composed of people whose normal work does not bring them into contact...", a: false },
+    { q: "Every job will require some degree of written communication skills.", a: true },
+    { q: "Your resume should be containing long sentences.", a: false },
+    { q: "Verbal communication encompasses both how you deliver and how you receive them.", a: true },
+    { q: "A meeting is the place where the group revises, updates, and adds to what it knows as a group.", a: true },
+    { q: "Skimming is a preparation task by guessing the genre of the text before reading it.", a: false },
+    { q: "Weak verbal communications help to ensure that issues will be spotted and resolved in formative stages.", a: false },
+    { q: "To improve your verbal communications, you should be confidence of yourself.", a: true }
+];
+
+// المتغيرات
+let currentQIndex = 0;
+let score = 0;
+let wrongAnswersList = [];
+
+// عناصر HTML
+const qText = document.getElementById("questionText");
+const ansList = document.getElementById("answersList");
+const qNumberSpan = document.getElementById("q-number");
+const qTotalSpan = document.getElementById("q-total");
+const quizArea = document.getElementById("quiz-area");
+const resultArea = document.getElementById("result-area");
+const finalScoreDiv = document.getElementById("final-score");
+const mistakesDiv = document.getElementById("mistakes-section");
+
+// تهيئة الاختبار
+qTotalSpan.innerText = allQuestions.length;
+
+function loadQuestion() {
+    // تحديث رقم السؤال
+    qNumberSpan.innerText = currentQIndex + 1;
+    
+    // مسح الإجابات القديمة
+    ansList.innerHTML = "";
+    
+    const currentQ = allQuestions[currentQIndex];
+    qText.innerText = currentQ.q;
+
+    // إنشاء الأزرار
+    const btnTrue = createBtn("True (صح)", true);
+    const btnFalse = createBtn("False (خطأ)", false);
+    
+    ansList.appendChild(btnTrue);
+    ansList.appendChild(btnFalse);
+}
+
+function createBtn(text, isTrueBtn) {
+    const btn = document.createElement("button");
+    btn.className = "answer-btn";
+    btn.innerText = text;
+    
+    btn.onclick = function() {
+        checkAnswer(isTrueBtn, btn);
+    };
+    return btn;
+}
+
+function checkAnswer(userChoice, btnElement) {
+    // منع الضغط المتكرر
+    const buttons = ansList.querySelectorAll("button");
+    buttons.forEach(b => b.disabled = true);
+
+    const currentQ = allQuestions[currentQIndex];
+    const isCorrect = (userChoice === currentQ.a);
+
+    if(isCorrect) {
+        btnElement.classList.add("correct");
+        score++;
+    } else {
+        btnElement.classList.add("incorrect");
+        // تسجيل الخطأ
+        wrongAnswersList.push({
+            q: currentQ.q,
+            correctAnswer: currentQ.a ? "True (صح)" : "False (خطأ)"
+        });
+    }
+
+    // الانتظار قليلاً ثم الانتقال للسؤال التالي
+    setTimeout(() => {
+        currentQIndex++;
+        if (currentQIndex < allQuestions.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }, 500);
+}
+
+function showResult() {
+    quizArea.style.display = "none";
+    resultArea.style.display = "block";
+    
+    // حساب النسبة
+    const percentage = Math.round((score / allQuestions.length) * 100);
+    let msg = "";
+    if(percentage >= 90) msg = "🌟 ممتاز يا بطل! امتياز";
+    else if(percentage >= 75) msg = "💪 جيد جداً! عاش";
+    else if(percentage >= 50) msg = "👍 مقبول.. راجع الأخطاء";
+    else msg = "⚠️ محتاج تراجع تاني";
+
+    finalScoreDiv.innerHTML = `${msg}<br><span style="font-size:3rem">${score}/${allQuestions.length}</span>`;
+
+    // عرض الأخطاء
+    if (wrongAnswersList.length > 0) {
+        mistakesDiv.innerHTML = `<h3 style="color:#e74c3c; margin-bottom:15px;">❌ أسئلة أجبت عليها بالخطأ (${wrongAnswersList.length}):</h3>`;
+        
+        wrongAnswersList.forEach(item => {
+            mistakesDiv.innerHTML += `
+            <div class="mistake-card">
+                <div class="mistake-q">${item.q}</div>
+                <div class="mistake-ans">✅ الإجابة الصحيحة: ${item.correctAnswer}</div>
+            </div>`;
+        });
+    } else {
+        mistakesDiv.innerHTML = `<h3 style="color:#2ecc71;">🎉 ما شاء الله! قفلت الامتحان بدون ولا غلطة.</h3>`;
+    }
+}
+
+// بدء التطبيق
+loadQuestion();
+
+</script>
+</body>
+</html>
